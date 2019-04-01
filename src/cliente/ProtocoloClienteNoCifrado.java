@@ -16,17 +16,23 @@ public class ProtocoloClienteNoCifrado {
 			String fromUser = stdIn.readLine();
 			
 			if(fromUser.equals("ALGORITMOS")) {
-				String message = fromUser + ":" + "RSA" + ":" + "AES" + ":" + "HmacSHA1";
+				String message = fromUser + ":" + "AES" + ":" + "RSA" + ":" + "HMACSHA1";
+				System.out.println("Message: " + message);
 				pOut.println(message);
 			}
 			else {
 				//Enviar el mensaje por la red
+				System.out.println("Si entra al else");
 				pOut.println(fromUser);
+				System.out.println("Si mandó el mensaje al servidor");
 			}
+	
 	
 
 			
-			String fromServer = pIn.readLine();
+			String fromServer = "";
+			
+			/*
 			
 			//Leer lo que llega por red
 			if((fromServer).equals("ERROR")) {
@@ -44,8 +50,10 @@ public class ProtocoloClienteNoCifrado {
 			
 			else{
 				System.out.println("La respuesta del Servidor: " + fromServer);
+			} */
+			if((fromServer = pIn.readLine()) != null) {
+				System.out.println("La respuesta del Servidor: " + fromServer);
 			}
-			
 		}
 
 	}

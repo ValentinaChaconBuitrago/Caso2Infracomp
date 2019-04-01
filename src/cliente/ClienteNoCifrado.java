@@ -12,15 +12,31 @@ public class ClienteNoCifrado {
 	public static final String SERVIDOR = "localhost";
 	
 	public static void main(String[] args) throws IOException {
-		Socket socket = new Socket(SERVIDOR, PUERTO);
-		PrintWriter escritor = new PrintWriter(socket.getOutputStream());
-		BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		
-		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 		
-		System.out.println("Puerto del cliente es: " + PUERTO);
-		
-		ProtocoloClienteNoCifrado.procesar(stdIn, lector, escritor);
+		Socket socket = null;
+        PrintWriter escritor = null;
+        BufferedReader lector = null;
+
+        System.out.println("Cliente ...");
+
+        try{
+            socket = new Socket(SERVIDOR,PUERTO);
+            
+            System.out.println("Puerto del cliente es: " + PUERTO);
+
+            escritor = new PrintWriter(socket.getOutputStream(),true);
+            lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+
+        }catch (IOException e){
+            System.err.println("Exception: " + e.getMessage());
+            System.exit(1);
+        }
+
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        
+        ProtocoloClienteNoCifrado.procesar(stdIn, lector, escritor);
 	
 		stdIn.close();
 		escritor.close();
