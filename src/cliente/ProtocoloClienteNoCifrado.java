@@ -9,51 +9,84 @@ public class ProtocoloClienteNoCifrado {
 	public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut) throws IOException {
 		
 		boolean ok1 = false;
+		String fromUser;
+		String fromServer = "";
+		int estado = 0;
 		
-		while(true) {
+		while(estado < 5) {
 			//Leer el input del teclado
-			System.out.println("Escriba el mensaje para el servidor: ");
-			String fromUser = stdIn.readLine();
 			
-			if(fromUser.equals("ALGORITMOS")) {
-				String message = fromUser + ":" + "AES" + ":" + "RSA" + ":" + "HMACSHA1";
-				System.out.println("Message: " + message);
-				pOut.println(message);
-			}
-			else {
-				//Enviar el mensaje por la red
-				System.out.println("Si entra al else");
-				pOut.println(fromUser);
-				System.out.println("Si mandó el mensaje al servidor");
-			}
-	
-	
+			
+			switch (estado) {
+			case 0:
+				// Estado en el que el Cliente envia "HOLA"
+				// Servidor debe responder "OK"
+				
+				System.out.println("Escriba el mensaje para el servidor: ");
+				
+				
+				if((fromUser = stdIn.readLine()).equals("HOLA")){
+					pOut.println(fromUser);
+					
+					if((fromServer = pIn.readLine()) != null) {
+						System.out.println("Respuesta del Servidor: " + fromServer);
+					}
+					
+					estado++;
+				}else {
+					System.out.println("ERROR. Esperaba HOLA");
+					estado = 0;
+				}
+				
+				break;
+			case 1:
+				// Estado en el que el Cliente envia "ALGORITMOS:<ALG>:<ALG>:<ALG>"
+				// Servidor debe responder "OK" ó "ERROR"
+				
+				System.out.println("Escriba el mensaje para el servidor: ");
+				
+				if((fromUser = stdIn.readLine()).equals("ALGORITMOS")){
+					String message = fromUser + ":" + "AES" + ":" + "RSA" + ":" + "HMACSHA1";
+					System.out.println("Message: " + message);
+					pOut.println(message);
+					
+					if((fromServer = pIn.readLine()) != null) {
+						System.out.println("Respuesta del Servidor: " + fromServer);
+					}
+					estado++;
+					
+				}else {
+					System.out.println("ERROR. Esperaba ALGORITMOS");
+					estado = 1;
+				}
+				
+				break;
 
+			case 2:
+				// Estado en el que el Cliente envia su Certificado Digital
+				// Servidor responde con su certificado digital
+				
+				
+				
+				
+				break;
+				
+			case 3:
+				// Estado en el que se envian los 128 bytes
+				
+				
+				break;
+				
+			case 4:
+				// Estado en el que Cliente envía "OK" y se envian los dos <DATOS>
+				
+				break;
 			
-			String fromServer = "";
-			
-			/*
-			
-			//Leer lo que llega por red
-			if((fromServer).equals("ERROR")) {
-				System.out.println("Se ha presentado un error con el servidor ");
+			default:
+				
 				break;
 			}
-			else if((fromServer).equals("OK") && !ok1) {
-				ok1 = true;
-				System.out.println("La respuesta del Servidor: " + fromServer);
-			}
-			else if((fromServer).equals("OK") && ok1) {
-				System.out.println("La respuesta del Servidor: " + fromServer);
-				//ENVIAR CERTIFICADO
-			}
-			
-			else{
-				System.out.println("La respuesta del Servidor: " + fromServer);
-			} */
-			if((fromServer = pIn.readLine()) != null) {
-				System.out.println("La respuesta del Servidor: " + fromServer);
-			}
+
 		}
 
 	}
