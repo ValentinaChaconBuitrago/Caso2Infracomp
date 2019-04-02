@@ -37,7 +37,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 
-public class CertificadoDigital {
+public final class CertificadoDigital {
 
 	/**
 	 * Metodo generador de llaves
@@ -58,13 +58,12 @@ public class CertificadoDigital {
 	 * @param keyPair
 	 * @param subjectDN
 	 * @return
-	 * @throws OperatorCreationException
-	 * @throws CertificateException
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	public static Certificate selfSign(KeyPair keyPair, String subjectDN)
-			throws OperatorCreationException, CertificateException, IOException
+	public static Certificate selfSign(String subjectDN)
+			throws Exception
 	{
+		KeyPair keyPair = generateKeyPair();
 		Provider bcProvider = new BouncyCastleProvider();
 		Security.addProvider(bcProvider);
 
@@ -112,7 +111,7 @@ public class CertificadoDigital {
 		String filename = "test_gen_self_signed.pkcs12";
 		char[] password = "test".toCharArray();
 
-		storeToPKCS12(filename, password, generatedKeyPair);
+		//storeToPKCS12(filename, password, generatedKeyPair);
 
 		KeyPair retrievedKeyPair = loadFromPKCS12(filename, password);
 
@@ -143,7 +142,7 @@ public class CertificadoDigital {
 		PrivateKey privateKey = privKeyEntry.getPrivateKey();
 		return new KeyPair(publicKey, privateKey);
 	}
-
+	/*
 	private static void storeToPKCS12(
 			String filename, char[] password,
 			KeyPair generatedKeyPair) throws KeyStoreException, IOException,
@@ -165,6 +164,6 @@ public class CertificadoDigital {
 		try (FileOutputStream fos = new FileOutputStream(filename)) {
 			pkcs12KeyStore.store(fos, password);
 		}
-	}
+	}*/
 
 }

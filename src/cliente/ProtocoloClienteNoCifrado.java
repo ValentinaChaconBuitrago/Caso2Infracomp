@@ -3,6 +3,7 @@ package cliente;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.cert.Certificate;
 
 public class ProtocoloClienteNoCifrado {
 
@@ -66,6 +67,15 @@ public class ProtocoloClienteNoCifrado {
 				// Estado en el que el Cliente envia su Certificado Digital
 				// Servidor responde con su certificado digital
 				
+				try {
+					Certificate certificado = CertificadoDigital.selfSign("cliente");
+					byte[] certificadoEnBytes = certificado.getEncoded();
+					String certificadoEnString = bytesToHex(certificadoEnBytes);
+					pOut.println(certificadoEnString);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				
 				
@@ -89,5 +99,22 @@ public class ProtocoloClienteNoCifrado {
 
 		}
 
+	}
+	
+	
+	/**
+	 * 
+	 * @param bytes
+	 * @return
+	 */
+	public static String bytesToHex(byte[] bytes) {
+		char[] hexArray = "0123456789ABCDEF".toCharArray();
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 }
