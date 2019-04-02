@@ -38,16 +38,18 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 public class CertificadoDigital {
-/**
- * Metodo generador de llaves
- * @return
- * @throws Exception
- */
+
+	/**
+	 * Metodo generador de llaves
+	 * @return
+	 * @throws Exception
+	 */
 	public static KeyPair generateKeyPair() throws Exception {
+		//TODO Aqui se debe cambiar la instancia RSA para que la llave no sea de 1024 sino de 128?
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+		//TODO O se cambia aqui el tamanio
 		generator.initialize(2048, new SecureRandom());
 		KeyPair pair = generator.generateKeyPair();
-
 		return pair;
 	}
 
@@ -76,7 +78,7 @@ public class CertificadoDigital {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startDate);
-		
+
 		// 1 Yr validity
 		calendar.add(Calendar.YEAR, 1);
 
