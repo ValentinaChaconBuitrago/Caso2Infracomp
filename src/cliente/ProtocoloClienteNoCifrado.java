@@ -3,9 +3,15 @@ package cliente;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 
+import javax.crypto.SecretKey;
+import javax.xml.bind.DatatypeConverter;
+
 public class ProtocoloClienteNoCifrado {
+	
+	
 
 	public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut) throws IOException {
 		
@@ -13,6 +19,8 @@ public class ProtocoloClienteNoCifrado {
 		String fromUser;
 		String fromServer = "";
 		int estado = 0;
+		
+		SecretKey llaveSimetrica = null;
 		
 		while(estado < 5) {
 			//Leer el input del teclado
@@ -31,6 +39,7 @@ public class ProtocoloClienteNoCifrado {
 					
 					if((fromServer = pIn.readLine()) != null) {
 						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println();
 					}
 					
 					estado++;
@@ -53,6 +62,7 @@ public class ProtocoloClienteNoCifrado {
 					
 					if((fromServer = pIn.readLine()) != null) {
 						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println();
 					}
 					estado++;
 					
@@ -68,13 +78,21 @@ public class ProtocoloClienteNoCifrado {
 				// Servidor responde con su certificado digital
 				
 				try {
-					Certificate certificado = CertificadoDigital.selfSign("cliente");
+					Certificate certificado = CertificadoDigital.selfSign("CN=cliente");
 					byte[] certificadoEnBytes = certificado.getEncoded();
 					String certificadoEnString = bytesToHex(certificadoEnBytes);
 					pOut.println(certificadoEnString);
+					
+					if((fromServer = pIn.readLine()) != null) {
+						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println();
+					}
+					estado++;
+					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					estado = 2;
 				}
 				
 				
@@ -82,13 +100,65 @@ public class ProtocoloClienteNoCifrado {
 				break;
 				
 			case 3:
-				// Estado en el que se envian los 128 bytes
+				// Estado en el que se envian los 128 bytes (Llave simetrica)
+				
+				
+				try {
+					llaveSimetrica = CertificadoDigital.generateSecretKey();
+					byte[] llaveEnBytes = llaveSimetrica.getEncoded();
+					String llaveString = bytesToHex(llaveEnBytes);
+					System.out.println("Llave simétrica a enviar: " + llaveString);
+					pOut.println(llaveString);
+					
+					if((fromServer = pIn.readLine()) != null) {
+						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println();
+					}
+					estado++;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					estado = 3;
+				}
+				
 				
 				
 				break;
 				
 			case 4:
 				// Estado en el que Cliente envía "OK" y se envian los dos <DATOS>
+				System.out.println("Escriba el mensaje para el servidor: ");
+				
+				
+				if((fromUser = stdIn.readLine()).equals("OK")){
+					pOut.println(fromUser);
+					
+					
+					
+					// Se empiezan a enviar los datos
+					
+					String datos = "15;41 24.2028,2 10.4418";
+					String datos2 = "15;41 24.2030,2 10.4546";
+					
+					byte[] datosCifrados = Simetrico.cifrar(llaveSimetrica, datos);
+					byte[] datos2Cifrados = Simetrico.cifrar(llaveSimetrica, datos2);
+					
+					
+					pOut.println(DatatypeConverter.printHexBinary(datosCifrados));
+					pOut.println(DatatypeConverter.printHexBinary(datos2Cifrados));
+					
+					
+					
+					if((fromServer = pIn.readLine()) != null) {
+						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println();
+					}
+					estado++;
+				}else {
+					System.out.println("ERROR. Esperaba HOLA");
+					estado = 0;
+				}
+				
 				
 				break;
 			

@@ -25,6 +25,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -38,7 +41,9 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 public final class CertificadoDigital {
-
+	
+	private final static String ALGORITMO_SIMETRICO = "AES";
+	
 	/**
 	 * Metodo generador de llaves
 	 * @return
@@ -52,6 +57,17 @@ public final class CertificadoDigital {
 		KeyPair pair = generator.generateKeyPair();
 		return pair;
 	}
+	
+	/**
+	 * Metodo que genera una llave simétrica
+	 * @return
+	 * @throws NoSuchAlgorithmException 
+	 */
+	public static SecretKey generateSecretKey() throws NoSuchAlgorithmException {
+		KeyGenerator keyGenerator = KeyGenerator.getInstance(ALGORITMO_SIMETRICO);
+		return keyGenerator.generateKey();
+	}
+	
 
 	/**
 	 * Metodo generador del certificado
