@@ -45,10 +45,10 @@ public class CertificadoDigital {
 	 * @throws Exception
 	 */
 	public static KeyPair generateKeyPair() throws Exception {
-		//TODO Aqui se debe cambiar la instancia RSA para que la llave no sea de 1024 sino de 128?
+		
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-		//TODO O se cambia aqui el tamanio
-		generator.initialize(2048, new SecureRandom());
+		//TODO se hizo un cambio de 2048 a 1024
+		generator.initialize(1024, new SecureRandom());
 		KeyPair pair = generator.generateKeyPair();
 		return pair;
 	}
@@ -152,6 +152,7 @@ public class CertificadoDigital {
 
 		Certificate selfSignedCertificate = selfSign(generatedKeyPair, "CN=owlstead");
 
+		//TODO REVISAR NOMBRE
 		KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
 		pkcs12KeyStore.load(null, null);
 
