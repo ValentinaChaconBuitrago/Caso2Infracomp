@@ -45,6 +45,8 @@ public final class CertificadoDigital {
 	private final static String ALGORITMO_SIMETRICO = "AES";
 	private final static String ALGORITMO_ASIMETRICO = "RSA";
 	
+	public static PrivateKey llavePrivadaCliente;
+	
 	/**
 	 * Metodo generador de llaves
 	 * @return
@@ -111,6 +113,8 @@ public final class CertificadoDigital {
 		X509CertificateHolder certificateHolder = certificateBuilder.build(contentSigner);
 
 		Certificate selfSignedCert = new JcaX509CertificateConverter().getCertificate(certificateHolder);
+		
+		llavePrivadaCliente = keyPair.getPrivate();
 
 		return selfSignedCert;
 	}
