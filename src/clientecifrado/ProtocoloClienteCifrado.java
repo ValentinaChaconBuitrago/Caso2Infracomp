@@ -1,4 +1,4 @@
-package cliente;
+package clientecifrado;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,6 +14,11 @@ import javax.security.cert.X509Certificate;
 import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
+
+import seguridad.Asimetrico;
+import seguridad.MiMac;
+import seguridad.Seguridad;
+import seguridad.Simetrico;
 
 public class ProtocoloClienteCifrado {
 
