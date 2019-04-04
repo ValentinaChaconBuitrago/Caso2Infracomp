@@ -1,7 +1,9 @@
 package cliente;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
@@ -9,9 +11,11 @@ import java.security.cert.Certificate;
 import javax.crypto.SecretKey;
 import javax.xml.bind.DatatypeConverter;
 
+import seguridad.Seguridad;
+
 public class ProtocoloClienteNoCifrado {
 	
-	
+	private static Certificate certificadoServidor;
 
 	public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut) throws IOException {
 		
@@ -80,11 +84,18 @@ public class ProtocoloClienteNoCifrado {
 				try {
 					Certificate certificado = Seguridad.generateCertificate("CN=cliente");
 					byte[] certificadoEnBytes = certificado.getEncoded();
+					System.out.println("Certificado Cliente: " + certificado);
 					String certificadoEnString = bytesToHex(certificadoEnBytes);
 					pOut.println(certificadoEnString);
 					
 					if((fromServer = pIn.readLine()) != null) {
 						System.out.println("Respuesta del Servidor: " + fromServer);
+						String strCertificadoServidor = fromServer;
+						byte[] certificadoServidorBytes = DatatypeConverter.parseHexBinary(strCertificadoServidor);
+						java.security.cert.CertificateFactory creator = java.security.cert.CertificateFactory.getInstance("X.509");
+						InputStream in = new ByteArrayInputStream(certificadoServidorBytes);
+						certificadoServidor = creator.generateCertificate(in);
+						System.out.println("Certificado Servidor: " + certificadoServidor);
 						System.out.println();
 					}
 					estado++;
@@ -138,6 +149,10 @@ public class ProtocoloClienteNoCifrado {
 					String datos = "15;41 24.2028,2 10.4418";
 					String datos2 = "15;41 24.2028,2 10.4418";
 					
+					
+					System.out.println("Message (Datos): " + datos);
+					System.out.println("Message 2 (Datos): " + datos2);
+					System.out.println();
 					pOut.println(DatatypeConverter.printHexBinary(datos.getBytes()));
 					pOut.println(DatatypeConverter.printHexBinary(datos2.getBytes()));
 					
@@ -145,6 +160,7 @@ public class ProtocoloClienteNoCifrado {
 					
 					if((fromServer = pIn.readLine()) != null) {
 						System.out.println("Respuesta del Servidor: " + fromServer);
+						System.out.println("Respuesta del Servidor (Texto Claro): " + new String(DatatypeConverter.parseHexBinary(fromServer)));
 						System.out.println();
 					}
 					estado++;

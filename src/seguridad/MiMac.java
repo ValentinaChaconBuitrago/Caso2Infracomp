@@ -1,4 +1,4 @@
-package cliente;
+package seguridad;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

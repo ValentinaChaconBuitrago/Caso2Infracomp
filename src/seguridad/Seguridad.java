@@ -1,4 +1,4 @@
-package cliente;
+package seguridad;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
