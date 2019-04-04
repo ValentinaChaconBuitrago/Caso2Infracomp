@@ -136,16 +136,11 @@ public class ProtocoloClienteNoCifrado {
 					
 					
 					// Se empiezan a enviar los datos
-					
 					String datos = "15;41 24.2028,2 10.4418";
-					String datos2 = "15;41 24.2030,2 10.4546";
+					String datos2 = "15;41 24.2028,2 10.4418";
 					
-					byte[] datosCifrados = Simetrico.cifrar(llaveSimetrica, datos);
-					byte[] datos2Cifrados = Simetrico.cifrar(llaveSimetrica, datos2);
-					
-					
-					pOut.println(DatatypeConverter.printHexBinary(datosCifrados));
-					pOut.println(DatatypeConverter.printHexBinary(datos2Cifrados));
+					pOut.println(DatatypeConverter.printHexBinary(datos.getBytes()));
+					pOut.println(DatatypeConverter.printHexBinary(datos2.getBytes()));
 					
 					
 					
