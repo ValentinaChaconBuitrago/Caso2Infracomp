@@ -43,6 +43,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 public final class CertificadoDigital {
 	
 	private final static String ALGORITMO_SIMETRICO = "AES";
+	private final static String ALGORITMO_ASIMETRICO = "RSA";
 	
 	/**
 	 * Metodo generador de llaves
@@ -51,7 +52,7 @@ public final class CertificadoDigital {
 	 */
 	public static KeyPair generateKeyPair() throws Exception {
 		
-		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+		KeyPairGenerator generator = KeyPairGenerator.getInstance(ALGORITMO_ASIMETRICO);
 		//TODO se hizo un cambio de 2048 a 1024
 		generator.initialize(1024, new SecureRandom());
 		KeyPair pair = generator.generateKeyPair();
@@ -76,9 +77,7 @@ public final class CertificadoDigital {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static Certificate selfSign(String subjectDN)
-			throws Exception
-	{
+	public static Certificate selfSign(String subjectDN) throws Exception{
 		KeyPair keyPair = generateKeyPair();
 		Provider bcProvider = new BouncyCastleProvider();
 		Security.addProvider(bcProvider);
@@ -103,19 +102,15 @@ public final class CertificadoDigital {
 		//TODO: Cual es el algoritmo que se utiliza en este paso?!!!!!!!!!!!!!!!!!!!!!!!!!!
 		String signatureAlgorithm = "SHA256WithRSA";
 
-		SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair
-				.getPublic().getEncoded());
+		SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());
 
-		X509v3CertificateBuilder certificateBuilder = new X509v3CertificateBuilder(dnName,
-				certSerialNumber, startDate, endDate, dnName, subjectPublicKeyInfo);
+		X509v3CertificateBuilder certificateBuilder = new X509v3CertificateBuilder(dnName, certSerialNumber, startDate, endDate, dnName, subjectPublicKeyInfo);
 
-		ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(
-				bcProvider).build(keyPair.getPrivate());
+		ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(bcProvider).build(keyPair.getPrivate());
 
 		X509CertificateHolder certificateHolder = certificateBuilder.build(contentSigner);
 
-		Certificate selfSignedCert = new JcaX509CertificateConverter()
-				.getCertificate(certificateHolder);
+		Certificate selfSignedCert = new JcaX509CertificateConverter().getCertificate(certificateHolder);
 
 		return selfSignedCert;
 	}
