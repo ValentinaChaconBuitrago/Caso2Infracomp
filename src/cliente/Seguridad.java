@@ -40,7 +40,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 
-public final class CertificadoDigital {
+public final class Seguridad {
 	
 	private final static String ALGORITMO_SIMETRICO = "AES";
 	private final static String ALGORITMO_ASIMETRICO = "RSA";
@@ -79,7 +79,7 @@ public final class CertificadoDigital {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static Certificate selfSign(String subjectDN) throws Exception{
+	public static Certificate generateCertificate(String subjectDN) throws Exception{
 		KeyPair keyPair = generateKeyPair();
 		Provider bcProvider = new BouncyCastleProvider();
 		Security.addProvider(bcProvider);

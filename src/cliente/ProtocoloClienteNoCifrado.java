@@ -78,7 +78,7 @@ public class ProtocoloClienteNoCifrado {
 				// Servidor responde con su certificado digital
 				
 				try {
-					Certificate certificado = CertificadoDigital.selfSign("CN=cliente");
+					Certificate certificado = Seguridad.generateCertificate("CN=cliente");
 					byte[] certificadoEnBytes = certificado.getEncoded();
 					String certificadoEnString = bytesToHex(certificadoEnBytes);
 					pOut.println(certificadoEnString);
@@ -104,7 +104,7 @@ public class ProtocoloClienteNoCifrado {
 				
 				
 				try {
-					llaveSimetrica = CertificadoDigital.generateSecretKey();
+					llaveSimetrica = Seguridad.generateSecretKey();
 					byte[] llaveEnBytes = llaveSimetrica.getEncoded();
 					String llaveString = bytesToHex(llaveEnBytes);
 					System.out.println("Llave simétrica a enviar: " + llaveString);
@@ -116,7 +116,6 @@ public class ProtocoloClienteNoCifrado {
 					}
 					estado++;
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					estado = 3;
 				}

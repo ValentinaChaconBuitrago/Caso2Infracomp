@@ -90,7 +90,7 @@ public class ProtocoloClienteCifrado {
 				// Servidor responde con su certificado digital
 
 				try {
-					miCertificado = CertificadoDigital.selfSign("CN=cliente");
+					miCertificado = Seguridad.generateCertificate("CN=cliente");
 					byte[] certificadoEnBytes = miCertificado.getEncoded();
 					String certificadoEnString = DatatypeConverter.printHexBinary(certificadoEnBytes);
 					System.out.println("Certificado Cliente a enviar: " + miCertificado);
@@ -125,7 +125,7 @@ public class ProtocoloClienteCifrado {
 				
 				//Se genera la llave simetrica <LS>
 				try {
-					llaveSimetrica = CertificadoDigital.generateSecretKey();
+					llaveSimetrica = Seguridad.generateSecretKey();
 					byte[] llaveEnBytes = llaveSimetrica.getEncoded();
 					byte[] llaveCifrada = Asimetrico.cifrar(certificadoServidor.getPublicKey(), ALGORITMO_ASIMETRICO, llaveEnBytes);
 					System.out.println("Llave simétrica a envíar: " + DatatypeConverter.printHexBinary(llaveEnBytes));
@@ -136,7 +136,7 @@ public class ProtocoloClienteCifrado {
 					
 					if((fromServer = pIn.readLine()) != null) {
 						byte[] mensajeEnBytes = DatatypeConverter.parseHexBinary(fromServer);
-						byte[] llaveSimetricaEnBytes = Asimetrico.descifrar(CertificadoDigital.llavePrivadaCliente, ALGORITMO_ASIMETRICO, mensajeEnBytes);
+						byte[] llaveSimetricaEnBytes = Asimetrico.descifrar(Seguridad.llavePrivadaCliente, ALGORITMO_ASIMETRICO, mensajeEnBytes);
 						SecretKey llaveSimetricaRecibida = new SecretKeySpec(llaveSimetricaEnBytes, 0, llaveSimetricaEnBytes.length, ALGORITMO_SIMETRICO);
 						
 						System.out.println("Respuesta del Servidor (Cifrada): " + DatatypeConverter.printHexBinary(mensajeEnBytes));
@@ -154,7 +154,6 @@ public class ProtocoloClienteCifrado {
 					estado++;
 					
 				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					estado = 3;
 				}
@@ -164,9 +163,27 @@ public class ProtocoloClienteCifrado {
 			case 4:
 				// Estado en el que el Cliente manda datos cifrados con la llave simétrica compartida entre los dos.
 				// Luego el cliente envía otros datos con HMAC cifrados con la misma llave simétrica compartida entre los dos.
+				String dato = "15;41 24.2028,2 10.4418";
+				byte[] datoCifrado = Simetrico.cifrar(llaveSimetrica, dato);
+				System.out.println("Message (Dato cifrado con llave simétrica): " + DatatypeConverter.printHexBinary(datoCifrado));
+				pOut.println(DatatypeConverter.printHexBinary(datoCifrado));
+				
+				byte[] mac = MiMac.cifrar(llaveSimetrica, dato);
+				System.out.println("Message (Dato en HMAC): " + DatatypeConverter.printHexBinary(mac));
+				System.out.println();
+				pOut.println(DatatypeConverter.printHexBinary(mac));
 				
 				
-
+				if((fromServer = pIn.readLine()) != null) {
+					System.out.println("Respuesta del servidor (Cifrada): " + fromServer);
+					byte[] respuestaServidorEnBytes = DatatypeConverter.parseHexBinary(fromServer);
+					
+					byte[] respuestaServidorDescifrada = Asimetrico.descifrar(certificadoServidor.getPublicKey(), ALGORITMO_ASIMETRICO, respuestaServidorEnBytes);
+					System.out.println("Respuesta del servidor (Descifrada): " + DatatypeConverter.printHexBinary(respuestaServidorDescifrada));
+					
+				}
+				
+				estado++;
 				break;
 
 			default:
