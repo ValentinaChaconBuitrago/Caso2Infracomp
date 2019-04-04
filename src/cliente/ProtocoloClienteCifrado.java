@@ -142,6 +142,14 @@ public class ProtocoloClienteCifrado {
 						System.out.println("Respuesta del Servidor (Cifrada): " + DatatypeConverter.printHexBinary(mensajeEnBytes));
 						System.out.println("Respuesta del Servidor (Descifrada): : " + DatatypeConverter.printHexBinary(llaveSimetricaRecibida.getEncoded()));
 						System.out.println();
+						
+						System.out.println("Escriba el mensaje para el servidor (Confirmación de llave simétrica): ");
+						if((fromUser = stdIn.readLine()).equals("OK")){
+							pOut.println(fromUser);
+						}else {
+							System.out.println("ERROR. Esperaba OK");
+							System.exit(0);
+						}
 					}
 					estado++;
 					
@@ -151,16 +159,13 @@ public class ProtocoloClienteCifrado {
 					estado = 3;
 				}
 				
-
-
-
-
-
 				break;
 
 			case 4:
-
-
+				// Estado en el que el Cliente manda datos cifrados con la llave simétrica compartida entre los dos.
+				// Luego el cliente envía otros datos con HMAC cifrados con la misma llave simétrica compartida entre los dos.
+				
+				
 
 				break;
 
