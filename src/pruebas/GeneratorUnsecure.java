@@ -9,8 +9,8 @@ public class GeneratorUnsecure {
 
 	public GeneratorUnsecure() {
 		Task work = createTask();
-		int numberOfTasks = 100;
-		int gapBetweenTasks = 1000;
+		int numberOfTasks = 10;
+		int gapBetweenTasks = 20;
 		generator = new LoadGenerator("Client - Server Load Test", numberOfTasks, work, gapBetweenTasks);
 		this.generator.generate();
 	}
@@ -23,6 +23,6 @@ public class GeneratorUnsecure {
 	public static void main (String[] args) {
 
 		@SuppressWarnings("unused")
-		Generator gen = new Generator();
+		GeneratorUnsecure gen = new GeneratorUnsecure();
 	}
 }

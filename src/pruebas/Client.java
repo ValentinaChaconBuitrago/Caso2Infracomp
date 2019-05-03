@@ -40,7 +40,7 @@ public class Client {
 	{
 		try
 		{
-			this.socket = new Socket("157.253.207.32", 3400);
+			this.socket = new Socket("157.253.207.54", 3400);
 			this.inS = this.socket.getInputStream();
 			this.outS = this.socket.getOutputStream();
 			this.pIn = new BufferedReader(new InputStreamReader(this.inS));
